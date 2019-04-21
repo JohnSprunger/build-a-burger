@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import Aux from '../../hoc/Auxiliary';
 import Burger from '../../components/Burger/Burger'; 
 import BuildControls from '../../components/Burger/BuildControls/BuildControls';
+import Modal from '../../components/UI/Modal/Modal'; 
+import OrderSummary from '../../components/Burger/OrderSummary/OrderSummary'; 
 
 const INGREDIENT_PRICES = {
     lettuce: 0, 
@@ -13,13 +15,14 @@ const INGREDIENT_PRICES = {
 class BurgerBuilder extends Component {
     state = {
         ingredients: {
-            lettuce: 1, 
-            bacon: 1,
-            meat: 1, 
-            cheese: 1 
+            lettuce: 0, 
+            bacon: 0,
+            meat: 0, 
+            cheese: 0 
         },
-        totalPrice: 5, 
-        purchaseable: false
+        totalPrice: 0, 
+        purchaseable: false, 
+        purchasing: false
     }
 
     updatePurchaseState = (ingredients) => {
@@ -31,7 +34,7 @@ class BurgerBuilder extends Component {
                 return sum + el;
             }, 0); 
 
-        this.setState({purchaseable: this.state.totalPrice > 5});
+        this.setState({purchaseable: sum > 1});
     }
 
     addIngredientHandler = (type) => {
@@ -55,7 +58,8 @@ class BurgerBuilder extends Component {
 
     removeIngredientHandler = (type) => {
         // Setting the count
-        const oldCount = this.state.ingredients[type]; 
+        const oldCount = this.state.ingredients[type];
+        if (oldCount <= 0) {return;} 
         const updatedCount = oldCount - 1; 
 
         // Updating ingredients
@@ -72,6 +76,18 @@ class BurgerBuilder extends Component {
         this.updatePurchaseState(updatedIngredients);
     }
 
+    purchaseHandler = () => {
+        this.setState({purchasing: true});
+    }
+
+    purchaseCancelHandler = () => {
+        this.setState({purchasing: false});
+    }
+
+    purchaseContinueHandler = () => {
+        alert('You continue!');
+    }
+
     render(){
         const disabledInfo = {
             ...this.state.ingredients
@@ -83,12 +99,21 @@ class BurgerBuilder extends Component {
 
         return(
             <Aux>
+                <Modal show={this.state.purchasing} modalClosed={this.purchaseCancelHandler}>
+                    <OrderSummary 
+                        ingredients={this.state.ingredients}
+                        price={this.state.totalPrice}
+                        purchaseCancelled={this.purchaseCancelHandler}
+                        purchaseContinued={this.purchaseContinueHandler} 
+                    />
+                </Modal> 
                 <Burger ingredients={this.state.ingredients} /> 
                 <BuildControls 
                     ingredientAdded={this.addIngredientHandler}
                     ingredientRemoved={this.removeIngredientHandler}
                     disabled={disabledInfo}
                     price={this.state.totalPrice}
+                    ordered={this.purchaseHandler}
                     purchasable={this.state.purchasable}
                 />  
             </Aux> 
