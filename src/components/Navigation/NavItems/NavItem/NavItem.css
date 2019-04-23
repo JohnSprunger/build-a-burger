@@ -1,0 +1,23 @@
+.NavItem {
+    margin: 0; 
+    box-sizing: border-box; 
+    display: flex; 
+    align-items: center; 
+    height: 100%;
+}
+
+.NavItem a {
+    color: white; 
+    text-decoration: none; 
+    height: 100%; 
+    padding: 16px 10px; 
+    border-bottom: 4px solid transparent; 
+}
+
+.NavItem a:hover, 
+.NavItem a:active, 
+.NavItem a.active {
+    background-color: rgb(247, 120, 120);
+    border-bottom: 4px solid rgb(43, 49, 51); 
+    color: white; 
+}
